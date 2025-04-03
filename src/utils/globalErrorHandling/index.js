@@ -10,5 +10,11 @@ export const asyncHandler = (fn) => {
 
 
 export const globalErrorHandler = (err, req, res, next) => {
-    res.status(err["cause"] || 500).json({ message: err.message, stack: err.stack })
+    if(process.env.MODE === "DEV"){
+        res.status(err["cause"] || 500).json({ message: err.message, stack: err.stack })
+    }
+    else{
+        res.status(err["cause"] || 500).json({ message: err.message })
+    }
+   
 }
