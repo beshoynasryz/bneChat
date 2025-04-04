@@ -1,15 +1,12 @@
 export const validation = (schema) => {
     return async (req, res, next) => {
-       let resultError = []
-       for (const key of Object.keys(schema)) {
-        const result = schema[key].validate(req[key] , {AbortEarly : false});
+       const inputData = {...req.body, ...req.query, ...req.params}
+     
+        const result = schema.validate(inputData , {AbortEarly : false});
         if (result.error) {
-            resultError.push(result.error.details[0].message)
+          return res.status (400).json({message : "validation error" , error : result?.error.details })
         }
-    }
-    if (resultError.length > 0) {
-        return res.status(400).send({message: resultError});
-    }
+
     next();
     }
 }
