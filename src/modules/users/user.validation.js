@@ -1,11 +1,10 @@
 import Joi from "joi"
+import { generalRules } from "../../utils"
 export const signUpSchema = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().email({ tlds: { allow: true }, minDomainSegments: 2, maxDomainSegments: 2 }).required(),
-    password: Joi.string().regex(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/).required(),
-    age: Joi.number().required(),
+    name: Joi.string().alphanum().min(3).max(20).required(),
+    email: generalRules.email.required(),
+    password: generalRules.password.required(),
+    cPassword: generalRules.password.required().valid(Joi.ref('password')),
     phone: Joi.string().required(),
-    gender: Joi.string().valid("male", "female").required(),
-    role: Joi.string().valid("user", "admin").required(),
 })
 
