@@ -1,5 +1,5 @@
 import Joi from "joi"
-import { generalRules } from "../../utils"
+import  generalRules  from "../../utils/generalRules/index.js"
 export const signUpSchema = Joi.object({
     name: Joi.string().alphanum().min(3).max(20).required(),
     email: generalRules.email.required(),

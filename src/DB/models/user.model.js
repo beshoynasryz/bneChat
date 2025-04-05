@@ -32,7 +32,6 @@ const UserSchema = new mongoose.Schema({
     },
     age: {
         type: Number,
-        required: true,
        
     },
     phone: {
@@ -40,9 +39,10 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true,
-
+ 
     },
     gender: {
+
         type: String,
         enum: Object.values(genderType),
         default : genderType.male,
@@ -82,5 +82,5 @@ const UserSchema = new mongoose.Schema({
 
 }, {
     timestamps: true}); 
-    
+
 export const userModel =mongoose.models.User ||  mongoose.model("User", UserSchema);
