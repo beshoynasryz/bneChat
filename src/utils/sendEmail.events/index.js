@@ -17,6 +17,6 @@ eventEmitter.on("sendEmailConfirmation", async (data) => {
     const otp = customAlphabet('1234567890', 4)()
     const hash = await Hash({ key: otp, SALT_ROUNDS: process.env.SALT_ROUNDS })
     await userModel.updateOne({ email }, {  otp : hash })
-    await sendEmail(email, "confirm email", templateEmail({otp}))
+    await sendEmail(email, "confirm email", "Your OTP Code", templateEmail({otp}))
 
 })
