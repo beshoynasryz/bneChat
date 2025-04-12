@@ -1,6 +1,6 @@
+import expressAsyncHandler from "express-async-handler";
 import {userModel} from "../../DB/models/index.js";
-import { Encrypt, eventEmitter, Hash } from "../../utils/index.js";
-// import { asyncHandler } from "../../utils/globalErrorHandling/index.js";
+import { Compare, Encrypt, eventEmitter, Hash } from "../../utils/index.js";
 
 export const signUp = async (req, res, next) => {
     try{
@@ -29,3 +29,17 @@ export const signUp = async (req, res, next) => {
 
 }
 
+export const confirmEmail = expressAsyncHandler(async (req, res, next) => {
+   const {email , otp} = req.body
+    const user = await userModel.findOne({email , otp})     
+   if(!user){
+    return next(new Error("email not exist or already confirmed", { cause: 400 }))
+   }
+   const match = await Compare({key: otp , hashed: user.otp})
+    if(!match){
+     return next(new Error("invalid otp", { cause: 400 }))
+    }
+    await userModel.updateOne({email} , {confirm: true , $unset: {otp: 0}})
+    return res.status(200).json({message: "email confirmed successfully"})
+
+})
