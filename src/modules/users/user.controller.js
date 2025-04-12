@@ -6,5 +6,6 @@ import { validation } from "../../middlewares/validation.js";
 const userRouter = Router();
 
 userRouter.post("/signup", validation(USV.signUpSchema), US.signUp);
+userRouter.post("/confirm-email",validation(USV.confirmEmailSchema) , US.confirmEmail);
 
 export default userRouter;
