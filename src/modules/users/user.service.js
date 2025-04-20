@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import {userModel} from "../../DB/models/index.js";
 import { Compare, Encrypt, eventEmitter, Hash } from "../../utils/index.js";
+import { roles } from "../../middlewares/auth.js";
 
 export const signUp = async (req, res, next) => {
     try{
@@ -43,3 +44,22 @@ export const confirmEmail = expressAsyncHandler(async (req, res, next) => {
     return res.status(200).json({message: "email confirmed successfully"})
 
 })
+
+export const login = expressAsyncHandler(async (req, res, next) => {
+    const {email , password} = req.body
+    const user = await userModel.findOne({email , confirm: true})
+    if(!user){
+        return next(new Error("email not exist or not confirmed", { cause: 400 }))
+    }
+    const match = await Compare({key: password , hashed: user.password})
+    if(!match){
+        return next(new Error("invalid password", { cause: 400 }))
+    }
+    const token = await user.generateToken(
+        { payload :{email ,id :user._id} ,
+        SIGNATURE: user.role === roles.user ? process.env.TOKEN_SIGNATURE_USER : process.env.TOKEN_SIGNATURE_ADMIN,
+        options: { expiresIn: "1h" } }
+    )
+    return res.status(200).json({message: "login successfully", token})
+    })
+   
