@@ -63,3 +63,13 @@ export const login = expressAsyncHandler(async (req, res, next) => {
     return res.status(200).json({message: "login successfully", token})
     })
    
+export const getUser = expressAsyncHandler(async (req, res, next) => {
+    const {id} = req.user
+    const user = await userModel.findById(id).select("-password -otp")
+    if(!user){
+        return next(new Error("user not found", { cause: 404 }))
+    }
+    return res.status(200).json({message: "user found successfully", user})
+}
+    
+    )
