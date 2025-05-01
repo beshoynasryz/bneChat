@@ -8,5 +8,5 @@ const userRouter = Router();
 userRouter.post("/signup", validation(USV.signUpSchema), US.signUp);
 userRouter.patch("/confirm-email",validation(USV.confirmEmailSchema) , US.confirmEmail);
 userRouter.post("/login", validation(USV.loginSchema), US.login);
-userRouter.get("/refreshToken", US.refreshToken);
+userRouter.get("/refreshToken",validation(USV.refreshTokenSchema) ,  US.refreshToken);
 export default userRouter;

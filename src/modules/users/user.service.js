@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import {userModel} from "../../DB/models/index.js";
 import { Compare, Encrypt, eventEmitter, Hash } from "../../utils/index.js";
 import { roles } from "../../middlewares/auth.js";
+import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res, next) => {
     try{

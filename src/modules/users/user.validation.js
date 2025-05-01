@@ -13,3 +13,10 @@ export const confirmEmailSchema = Joi.object({
     code: Joi.string().length(4).required(),
 })
 
+export const loginSchema = Joi.object({
+    email: generalRules.email.required(),
+    password: generalRules.password.required(),
+})
+export const refreshTokenSchema = Joi.object({
+    authorization: Joi.string().required(),
+})
