@@ -63,13 +63,38 @@ export const login = expressAsyncHandler(async (req, res, next) => {
     return res.status(200).json({message: "login successfully", token})
     })
    
-export const getUser = expressAsyncHandler(async (req, res, next) => {
-    const {id} = req.user
-    const user = await userModel.findById(id).select("-password -otp")
-    if(!user){
-        return next(new Error("user not found", { cause: 404 }))
+ 
+
+export const refreshToken = expressAsyncHandler(async (req, res, next) => {
+    const {authorization} = req.body
+    const [prefix, token] = authorization?.split(' ') || []
+    if (!prefix || !token) {
+        return next(new Error("authorization token is required!!!!", { cause: 400 }))
     }
-    return res.status(200).json({message: "user found successfully", user})
-}
-    
+    let SIGNATURE = undefined
+    if (prefix === process.env.PREFIX_SIGNATURE_USER) {
+        SIGNATURE = process.env.TOKEN_SIGNATURE_USER
+    } else if (prefix === process.env.PREFIX_SIGNATURE_ADMIN) {
+        SIGNATURE = process.env.TOKEN_SIGNATURE_ADMIN
+    } else {
+        return next(new Error("Invalid authorization token prefix", { cause: 401 }))
+    }
+    const decoded = jwt.verify(token, SIGNATURE)
+    if (!decoded?.id) {
+        return next(new Error("Invalid token payload", { cause: 400 }))
+    }
+    const user = await userModel.findById(decoded.id)
+    const accessToken = await user.generateToken(
+        { payload :{email :user.email ,id :user._id} ,
+        SIGNATURE: user.role === roles.user ? process.env.TOKEN_SIGNATURE_USER : process.env.TOKEN_SIGNATURE_ADMIN,
+        options: { expiresIn: "1h" } }
     )
+    return res.status(200).json({message: "refresh token successfully", token: accessToken})
+
+     
+  
+
+ 
+    })
+   
+ 

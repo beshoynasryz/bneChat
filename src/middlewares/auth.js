@@ -1,6 +1,6 @@
 
 import jwt from 'jsonwebtoken';
-import userModel from '../DB/models/user.model.js';
+import {userModel} from '../DB/models/user.model.js';
 import { asyncHandler } from '../utils/globalErrorHandling/index.js';
 
 
@@ -16,9 +16,9 @@ export const authentication = asyncHandler(async (req, res, next) => {
         return next(new Error("authorization token is required!!!!", { cause: 400 }))
     }
     let SIGNATURE = undefined
-    if (prefix === 'Bearer') {
+    if (prefix === process.env.PREFIX_SIGNATURE_USER) {
         SIGNATURE = process.env.TOKEN_SIGNATURE_USER
-    } else if (prefix === "Admin") {
+    } else if (prefix === process.env.PREFIX_SIGNATURE_ADMIN) {
         SIGNATURE = process.env.TOKEN_SIGNATURE_ADMIN
     } else {
         return next(new Error("Invalid authorization token prefix", { cause: 401 }))

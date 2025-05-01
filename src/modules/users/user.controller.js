@@ -7,5 +7,6 @@ const userRouter = Router();
 
 userRouter.post("/signup", validation(USV.signUpSchema), US.signUp);
 userRouter.patch("/confirm-email",validation(USV.confirmEmailSchema) , US.confirmEmail);
-
+userRouter.post("/login", validation(USV.loginSchema), US.login);
+userRouter.get("/refreshToken", US.refreshToken);
 export default userRouter;
